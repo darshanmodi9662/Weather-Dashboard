@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Weather Dashboard</title>
+</head>
+
+<body class="day-mode">
+    <div class="overlay"></div>
+    <div class="container text-center">
+        <h1 class="my-4">Weather Dashboard</h1>
+        <div class="form-group">
+            <label class="switch">
+                <input type="checkbox" id="toggleMode">
+                <span class="slider"></span>
+            </label>
+            <span id="toggleLabel">Day Mode</span>
+        </div>
+        <div id="weatherSlider" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="card weather-card">
+                        <img src="city1.jpg" class="card-img-top img-fluid" alt="City 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Mumbai</h5>
+                            <p class="card-text">Sunny, 25°C</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="card weather-card">
+                        <img src="city2.jpg" class="card-img-top img-fluid" alt="City 2">
+                        <div class="card-body">
+                            <h5 class="card-title">Ahmedabad</h5>
+                            <p class="card-text">Cloudy, 18°C</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="card weather-card">
+                        <img src="city3.jpg" class="card-img-top img-fluid" alt="City 3">
+                        <div class="card-body">
+                            <h5 class="card-title">Delhi</h5>
+                            <p class="card-text">Rainy, 15°C</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-control-prev" href="#weatherSlider" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#weatherSlider" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        const cityImages = {
+            'city1': {
+                day: 'city1.jpg',
+                night: 'night-city1.jpg'
+            },
+            'city2': {
+                day: 'city2.jpg',
+                night: 'night-city2.jpg'
+            },
+            'city3': {
+                day: 'city3.jpg',
+                night: 'night-city3.jpg'
+            }
+        };
+
+        document.getElementById('toggleMode').addEventListener('click', function () {
+            document.body.classList.toggle('night-mode');
+            document.body.classList.toggle('day-mode');
+            setSeasonalBackground(); // Update background on mode change
+            updateCityImages(); // Update city images on mode change
+        });
+
+        // Function to update city images based on mode
+        function updateCityImages() {
+            const isNightMode = document.body.classList.contains('night-mode');
+            const cityElements = document.querySelectorAll('.weather-card img');
+
+            cityElements.forEach((img, index) => {
+                const cityKey = `city${index + 1}`;
+                img.src = isNightMode ? cityImages[cityKey].night : cityImages[cityKey].day;
+            });
+        }
+
+        // Function to determine the current season
+        function getCurrentSeason() {
+            const month = new Date().getMonth();
+            if (month >= 2 && month <= 4) return 'spring';
+            if (month >= 5 && month <= 7) return 'summer';
+            if (month >= 8 && month <= 10) return 'autumn';
+            return 'winter';
+        }
+
+        // Function to set background based on the season and mode
+        function setSeasonalBackground() {
+            const season = getCurrentSeason();
+            let backgroundImage;
+
+            if (document.body.classList.contains('night-mode')) {
+                backgroundImage = 'night-' + season + '.jpg'; // Example filenames
+            } else {
+                backgroundImage = season + '.jpg';
+            }
+
+            document.body.style.backgroundImage = `url('${backgroundImage}')`;
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+            updateOverlay();
+        }
+
+        function updateOverlay() {
+            const overlay = document.querySelector('.overlay');
+            if (document.body.classList.contains('night-mode')) {
+                overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            } else {
+                overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+            }
+        }
+
+        // Set the background and city images when the page loads
+        setSeasonalBackground();
+        updateCityImages();
+    </script>
+    <script>
+        // Set initial label based on checkbox state
+        document.getElementById('toggleLabel').innerText = document.getElementById('toggleMode').checked ? "Night Mode" : "Day Mode";
+
+        document.getElementById('toggleMode').addEventListener('change', function () {
+            const isChecked = this.checked;
+            document.body.classList.toggle('night-mode', isChecked);
+            document.body.classList.toggle('day-mode', !isChecked);
+
+            setSeasonalBackground();
+            updateCityImages();
+
+            // Update the toggle label
+            document.getElementById('toggleLabel').innerText = isChecked ? "Night Mode" : "Day Mode";
+        });
+
+        // Initial function calls if necessary
+        setSeasonalBackground();
+        updateCityImages();
+    </script>
+</body>
+
+</html>
